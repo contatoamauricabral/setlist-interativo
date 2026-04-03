@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Setlist Interativo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ÁREA DO PÚBLICO -->
+  <div id="area-publico">
+    <h1>🎶 Escolha aqui</h1>
+
+    <input type="text" id="busca" placeholder="Digite o nome da música...">
+
+    <ul id="lista-musicas"></ul>
+  </div>
+
+  <!-- ÁREA DO MÚSICO -->
+  <div id="area-musico">
+    <h2>📋 Pedidos da noite</h2>
+    <ul id="fila"></ul>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal escondido">
+    <div class="modal-conteudo">
+      <h2 id="musica-selecionada"></h2>
+
+      <input type="text" id="nome" placeholder="Seu nome (opcional)">
+      <textarea id="mensagem" placeholder="Quer dedicar essa música pra alguém? 👀 (opcional)"></textarea>
+
+      <button type="button" id="btn-enviar">▶️ Enviar</button>
+      <button type="button" id="btn-cancelar">❌ Cancelar</button>
+    </div>
+  </div>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- SEU SCRIPT -->
+  <script src="script.js"></script>
+
+</body>
+</html>
