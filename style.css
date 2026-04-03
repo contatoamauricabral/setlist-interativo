@@ -1,7 +1,15 @@
 body {
-  font-family: Space Grotesk, sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   text-align: center;
-  background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
+
+  background: 
+    linear-gradient(rgba(10,10,20,0.85), rgba(5,5,10,0.95)),
+    url("fundodoapp.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
   color: white;
   margin: 0;
   padding: 10px;
@@ -20,6 +28,11 @@ input {
   border-radius: 12px;
   border: none;
   font-size: 16px;
+
+  background: rgba(255,255,255,0.1);
+  color: white;
+
+  outline: none;
 }
 
 ul {
@@ -28,18 +41,22 @@ ul {
 }
 
 li {
-  background: #222;
+  background: rgba(255,255,255,0.05);
   margin: 12px 0;
   padding: 18px;
   border-radius: 14px;
   cursor: pointer;
-  font-size: 18px; /* 🔥 AQUI MUDA TUDO */
-  font-weight: bold;
-  transition: transform 0.1s, background 0.2s;
+  font-size: 18px;
+  font-weight: 500;
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  transition: all 0.2s ease;
 }
 
 li:hover {
-  background: #333;
+  background: rgba(0,255,200,0.1);
+  border: 1px solid #00ffcc;
 }
 
 li:active {
@@ -47,6 +64,7 @@ li:active {
   background: #00ffcc;
   color: black;
 }
+
 .modal-conteudo {
   background: #1e1e2f;
   padding: 20px;
@@ -109,4 +127,22 @@ button:hover {
 
 .modal.ativo {
   display: flex;
+}
+
+#area-publico {
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 15px;
+  margin: 10px;
+}
+
+.btn-perigo {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-weight: bold;
 }

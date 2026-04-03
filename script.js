@@ -22,20 +22,45 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let pedidos = [];
-const musicas = [
-  "Tempo Perdido",
-  "Evidências",
-  "Anna Júlia",
-  "Primeiros Erros",
-  "Meu Erro"
-];
+let musicas = [];
+
+db.collection("musicas")
+  .onSnapshot(snapshot => {
+    musicas = [];
+
+    snapshot.forEach(doc => {
+      musicas.push(doc.data().nome);
+    });
+
+    mostrarMusicas(musicas);
+  });
 
 const lista = document.getElementById("lista-musicas");
 
+function ordenarMusicas(lista) {
+  const tipo = document.getElementById("ordenacao")?.value;
+
+  if (tipo === "alfabetica") {
+    return [...lista].sort((a, b) => a.localeCompare(b));
+  }
+
+  if (tipo === "popular") {
+    return [...lista].sort((a, b) => {
+      const pedidosA = pedidos.find(p => p.musica === a)?.quantidade || 0;
+      const pedidosB = pedidos.find(p => p.musica === b)?.quantidade || 0;
+
+      return pedidosB - pedidosA;
+    });
+  }
+
+  return lista;
+}
+
 function mostrarMusicas(listaFiltrada) {
+  const listaOrdenada = ordenarMusicas(listaFiltrada);
   lista.innerHTML = "";
 
-  listaFiltrada.forEach(musica => {
+  listaOrdenada.forEach(musica => {
     const item = document.createElement("li");
     item.textContent = musica;
 
@@ -52,7 +77,7 @@ function mostrarMusicas(listaFiltrada) {
 }
 
 // Mostrar todas ao carregar
-mostrarMusicas(musicas);
+
 const busca = document.getElementById("busca");
 
 busca.addEventListener("input", () => {
@@ -64,6 +89,15 @@ busca.addEventListener("input", () => {
 
   mostrarMusicas(filtradas);
 });
+
+const selectOrdenacao = document.getElementById("ordenacao");
+
+if (selectOrdenacao) {
+  selectOrdenacao.addEventListener("change", () => {
+    mostrarMusicas(musicas);
+  });
+}
+
 async function enviarPedido(musica, nome, mensagem) {
   try {
     console.log("🔥 Enviando pedido...");
@@ -84,6 +118,68 @@ async function enviarPedido(musica, nome, mensagem) {
     alert("Erro ao enviar pedido 😢");
   }
 }
+
+async function importarMusicasEmLote() {
+  const input = document.getElementById("nova-musica");
+
+  const lista = input.value
+    .split("\n")
+    .map(m => m.trim())
+    .filter(m => m);
+
+  if (lista.length === 0) {
+    alert("Escreve pelo menos uma música 😅");
+    return;
+  }
+
+  let adicionadas = 0;
+  let ignoradas = 0;
+
+  for (const nome of lista) {
+    const nomeNormalizado = nome.toLowerCase();
+    const snapshot = await db.collection("musicas")
+      .where("nome_normalizado", "==", nomeNormalizado)
+      .get();
+
+    if (snapshot.empty) {
+      await db.collection("musicas").add({ 
+        nome,
+        nome_normalizado: nomeNormalizado
+      });
+      adicionadas++;
+    } else {
+      ignoradas++;
+    }
+  }
+
+  input.value = "";
+
+  alert(`🎶 ${adicionadas} adicionadas\n⚠️ ${ignoradas} já existiam`);
+}
+
+async function limparSetlist() {
+  const confirmar = confirm("⚠️ Tem certeza que deseja apagar TODAS as músicas?\nEssa ação não pode ser desfeita!");
+
+  if (!confirmar) return;
+
+  try {
+    const snapshot = await db.collection("musicas").get();
+
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    alert("🧹 Setlist apagado com sucesso!");
+  } catch (erro) {
+    console.error("Erro ao limpar setlist:", erro);
+    alert("Deu ruim ao apagar 😢");
+  }
+}
+
 function mostrarAgradecimento() {
   document.body.innerHTML = `
     <div style="text-align:center; margin-top:50px;">
@@ -152,6 +248,27 @@ function confirmarPedido() {
   fecharModal();
 }
 
+async function adicionarMusica() {
+  const input = document.getElementById("nova-musica");
+  const nome = input.value.trim();
+
+  if (!nome) {
+    alert("Digite o nome da música 😅");
+    return;
+  }
+
+  try {
+    await db.collection("musicas").add({
+      nome: nome
+    });
+
+    input.value = "";
+  } catch (erro) {
+    console.error("Erro ao adicionar música:", erro);
+    alert("Deu ruim 😢");
+  }
+}
+
 
 window.onclick = function(event) {
   const modal = document.getElementById("modal");
@@ -168,7 +285,15 @@ function atualizarFila() {
 
     item.innerHTML = `
       <strong>${pedido.musica}</strong> (${pedido.quantidade} pedidos)
-      <br>
+      <br><br>
+
+      ${pedido.detalhes.map(d => `
+        <div style="margin-bottom:8px; font-size:14px; text-align:left;">
+         ${d.nome ? `<strong>${d.nome}:</strong>` : ""}
+         ${d.mensagem ? `<em>${d.mensagem}</em>` : ""}
+       </div>
+      `).join("")}
+
       <button onclick="marcarComoTocada('${pedido.musica}')">
         ✅ Tocada
       </button>
@@ -198,10 +323,18 @@ db.collection("pedidos")
 
       if (existente) {
         existente.quantidade++;
+        existente.detalhes.push({
+        nome: data.nome,
+        mensagem: data.mensagem
+        });
       } else {
         pedidos.push({
           musica: data.musica,
-          quantidade: 1
+          quantidade: 1,
+          detalhes: [{
+            nome: data.nome,
+            mensagem: data.mensagem
+            }]
         });
       }
     });
@@ -217,4 +350,7 @@ function voltarInicio() {
 }
 window.voltarInicio = voltarInicio;
 window.marcarComoTocada = marcarComoTocada;
+window.adicionarMusica = adicionarMusica;
+window.importarMusicasEmLote = importarMusicasEmLote;
+window.limparSetlist = limparSetlist;
 });

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>Setlist Interativo</title>
@@ -15,11 +16,25 @@
 
     <input type="text" id="busca" placeholder="Digite o nome da música...">
 
+    <select id="ordenacao">
+      <option value="popular">🔥 Mais pedidas</option>
+      <option value="alfabetica">🔤 A-Z</option>
+    </select>
     <ul id="lista-musicas"></ul>
   </div>
 
   <!-- ÁREA DO MÚSICO -->
   <div id="area-musico">
+    <div id="controle-musico">
+      <textarea id="nova-musica" placeholder="Uma música por linha..."></textarea>
+      <button onclick="adicionarMusica()">➕ Adicionar</button>
+    </div>
+    <button onclick="importarMusicasEmLote()">
+      📥 Importar setlist
+    </button>
+    <button onclick="limparSetlist()" class="btn-perigo">
+      🧹 Limpar setlist
+    </button>
     <h2>📋 Pedidos da noite</h2>
     <ul id="fila"></ul>
   </div>
