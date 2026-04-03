@@ -1,22 +1,23 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: Space Grotesk, sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
   color: white;
   margin: 0;
+  padding: 10px;
 }
 
 h1 {
-  margin-top: 30px;
-  font-size: 28px;
+  margin-top: 20px;
+  font-size: 24px;
   letter-spacing: 1px;
 }
 
 input {
-  padding: 12px;
-  width: 80%;
-  margin: 20px;
-  border-radius: 10px;
+  padding: 14px;
+  width: 90%;
+  margin: 15px 0;
+  border-radius: 12px;
   border: none;
   font-size: 16px;
 }
@@ -28,10 +29,12 @@ ul {
 
 li {
   background: #222;
-  margin: 10px;
-  padding: 15px;
-  border-radius: 12px;
+  margin: 12px 0;
+  padding: 18px;
+  border-radius: 14px;
   cursor: pointer;
+  font-size: 18px; /* 🔥 AQUI MUDA TUDO */
+  font-weight: bold;
   transition: transform 0.1s, background 0.2s;
 }
 
@@ -40,7 +43,9 @@ li:hover {
 }
 
 li:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
+  background: #00ffcc;
+  color: black;
 }
 .modal-conteudo {
   background: #1e1e2f;

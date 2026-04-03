@@ -216,4 +216,5 @@ function voltarInicio() {
   window.location.reload();
 }
 window.voltarInicio = voltarInicio;
+window.marcarComoTocada = marcarComoTocada;
 });
